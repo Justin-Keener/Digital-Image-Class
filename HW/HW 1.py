@@ -21,5 +21,5 @@ plt.imshow(cv2.cvtColor(im2, cv2.COLOR_BGR2RGB))
 plt.show()
 
 # Prints the infomartion to compare the file sizes
-print('Size of the jpeg file in bytes: ', os.stat(img1_path).st_size)
+print('Size of the jpeg file in bytes: ', os.stat(im1_path).st_size)
 print('Size of the png file in bytes: ', os.stat(im2_path).st_size)
