@@ -30,15 +30,12 @@ dst = cv2.warpPerspective(img,M,(1500,1500))
 dst2 = cv2.warpAffine(img2,M2,(cols2,rows2))
 
 # Plotting the images
-
-plt.figure(figsize=(18,20))
-
 cv2.circle(img, (164,976), 50, (0,255,0), -1)
 cv2.circle(img, (4027,1015), 50, (0,255,0) , -1)
 cv2.circle(img, (164,3000), 50, (0,255,0), -1)
 cv2.circle(img, (4027, 3000), 50, (0,255,0), -1)
 
-plt.figure(figsize = (25, 25))
+plt.figure(figsize =(25, 25))
 plt.subplot(121),plt.imshow(img),plt.title('Nonorthograpgic')
 plt.subplot(122),plt.imshow(dst),plt.title('Orthographical Version')
 
