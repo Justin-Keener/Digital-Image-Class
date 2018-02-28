@@ -35,9 +35,9 @@ M2 = cv2.getAffineTransform(pts3,pts4)
 M3 = cv2.getRotationMatrix2D((cols3/2,rows3/2),90,1)
 
 # Destination Image
-dst = cv2.warpPerspective(img,M,(1500,1500), interpolation = cv2.INTER_CUBIC)
-dst2 = cv2.warpAffine(img2,M2,(cols2,rows2), interpolation = cv2.INTER_CUBIC)
-dst3 = cv2.warpAffine(img3,M3,(cols3,rows3), interpolation = cv2.INTER_CUBIC )
+dst = cv2.warpPerspective(img,M,(1500,1500))
+dst2 = cv2.warpAffine(img2,M2,(cols2,rows2))
+dst3 = cv2.warpAffine(img3,M3,(cols3,rows3))
 
 # Plotting the Perspective Transformation Image
 plt.figure(figsize =(25, 25))
