@@ -1,7 +1,6 @@
 import cv2 
 import numpy as np
 import matplotlib.pyplot as plt
-import matplotlib.image as mpimg
 import numpy as np
 
 
@@ -114,9 +113,8 @@ plt.subplot(224),plt.plot(cdf_normalized, color = 'b'),plt.hist(eq_img.flatten()
 plt.show()
 
 """------Histogram Equalization for Colored Images------"""
-
-# Assigns the name of BGR channels
-color1 = ('b','g','r')
+# Assigns the name of RGB channels
+color1 = ('r','g','b')
 
 # Splits the RGB pixels of the image into channels 
 channels = cv2.split(RGB_img)
@@ -124,31 +122,33 @@ channels = cv2.split(RGB_img)
 # Creates an empty array for the equalized RGB pixels
 eq_channels = []
 
-# Equalizes the histograms of the split BGR channels and stores them into the empty array
-for ch, color in zip(channels, ['B', 'G','R']):
+# Runs through RGB channels to add color to the calculated histograms
+for ch, color in zip(channels, ['R', 'G','B']):
     eq_channels.append(cv2.equalizeHist(ch))
 
 # Creates a new image after merging the equalized RGB channels together
 eq_img = cv2.merge(eq_channels)
 eq_img = cv2.cvtColor(eq_img, cv2.COLOR_BGR2RGB)
 
-# Runs through BGR channels to add color to the calculated histograms
+# Runs through RGB channels to add color to the calculated histograms
 for i, col in enumerate(color1):
-
     # Calculates the histogram of the RGB image
-    hist = cv2.calcHist([RGB_img],[i],None,[256],[0,256])
+    hist = cv2.calcHist([img],[i],None,[256],[0,256])
     
     # Calculates the equalized histogram
     hist2 = cv2.calcHist([eq_img],[i], None, [256], [0,256])
     
     # Plots the colorful image, equalized image, colorful histogram, and equalized histogram
-    plt.figure(figsize=(20,20))
     plt.subplot(221), plt.imshow(RGB_img)
     plt.subplot(222), plt.imshow(eq_img)
     plt.subplot(223), plt.plot(hist, color= col),plt.xlim([0,256])
     plt.subplot(224), plt.plot(hist2, color= col),plt.xlim([0,256])
+
 plt.show()
 
+"""------Template Matching------"""
+
+# Dimensions of the template
 w, h = template.shape[::-1]
 
 # Cross Correlation Method
@@ -170,6 +170,7 @@ for corr_method in method:
 
     cv2.rectangle(img5,top_left, bottom_right, 255, 2)
     
+    # Plots the Matching Result and Detection Point
     plt.subplot(121),plt.imshow(res,cmap = 'gray')
     plt.title('Matching Result'), plt.xticks([]), plt.yticks([])
     plt.subplot(122),plt.imshow(img5,cmap = 'gray')
