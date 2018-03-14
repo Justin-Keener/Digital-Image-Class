@@ -68,81 +68,53 @@ plt.subplot(224),plt.imshow(cv2.putText(correction3, "g = {}".format(2.5),(20,80
 plt.title("3rd Gamma Correction")
 plt.show()
 
-""" ------Histogram Equalization for Grayscale Image------ """
+""" 
+------Histogram Equalization for Grayscale Image------ 
 
-# unpacks the histogram data into hist and the number of bins from 0 to 256 into variable bin
+The sequence of code from lines 1-11 is the mathematical process of determining the cdf to be implemented 
+as the Equalized Transformation function to a source image. The plot of the cdf is shown for the source image
+and the equalized image to distinguish. Cdf for the equalized image is suppose to represent an increasing linear function in the 
+form of steps.
+
+"""
+# [1] unpacks the histogram data into hist and the number of bins from 0 to 256 into variable bin
 hist,bins = np.histogram(img2.flatten(),256,[0,256])
 
-# Calculates the cdf probability for the histogram
+# [2] Calculates the cdf probability for the histogram
 cdf = hist.cumsum()
 
-# Calulates the cdf probability to be normalized to [0,255]
+# [3] Calulates the cdf probability to be normalized to [0,255]
 cdf_normalized = cdf * hist.max()/ cdf.max()
 
-# Plots the gray scale image next to the histogram
-plt.figure(figsize=(20,20))
-plt.subplot(221),plt.imshow(img2, cmap = 'gray')
-plt.subplot(222),plt.plot(cdf_normalized, color = 'b'),plt.hist(img2.flatten(),256,[0,256], color = 'r'),plt.xlim([0,256])
+# [4] Plots the gray scale image next to the histogram
+plt.figure(figsize= (10,10))
+plt.subplot(221),plt.imshow(img2, cmap = 'gray'),plt.title("Grayscale Image")
+plt.subplot(222),plt.plot(cdf_normalized, color = 'b'),plt.hist(img2.flatten(),256,[0,256], color = 'r'),plt.xlim([0,256]),plt.title("Grayscale Histogram")
 
-# Returns the masked values of the cdf curve except for 0
+# [5] Returns the masked values of the cdf curve except for 0
 cdf_m = np.ma.masked_equal(cdf,0)
 
-# General Histogram Equalization formula: h(v) = ((cdf(v)-cdfmin)/((M x N) - 1) x (L-1)
+# [6] General Histogram Equalization formula: h(v) = ((cdf(v)-cdfmin)/((M x N) - 1) x (L-1)
 cdf_m = (cdf_m - cdf_m.min())*255/(cdf_m.max()-cdf_m.min())
 
-# Returns cdf to have the masked values of cdf_m replaced with fill values from 1 to 255
-# Equalized Histogram Transformation Function
+# [7] Returns cdf to have the masked values of cdf_m replaced with fill values from 1 to 255
 cdf = np.ma.filled(cdf_m,0).astype('uint8')
 
-# Transforms a new image to be an equalized image of the source image using cdf as the transform
+# [8] Transforms a new image to be an equalized image of the source image using cdf as the transform
 eq_img = cdf[img2]
 
-# Unpacks the data as one dimension for the histogram and determines the range for bins
+# [9] Unpacks the data as one dimension for the histogram and determines the range for bins
 hist,bins = np.histogram(eq_img.flatten(),256,[0,256])
 
-# Calculates the cdf probability for the histogram
+# [10] Calculates the cdf probability for the histogram
 cdf = hist.cumsum()
 
-# Calulates the cdf probability to be normalized to [0,255]
+# [11] Calulates the cdf probability to be normalized to [0,255]
 cdf_normalized = cdf * hist.max()/ cdf.max()
 
 # Plots the grayscale image next to the equalized grayscale histogram
-plt.subplot(223),plt.imshow(eq_img, cmap = 'gray')
-plt.subplot(224),plt.plot(cdf_normalized, color = 'b'),plt.hist(eq_img.flatten(),256,[0,256], color = 'r'),plt.xlim([0,256])
-
-plt.show()
-
-"""------Histogram Equalization for Colored Images------"""
-# Assigns the name of RGB channels
-color1 = ('r','g','b')
-
-# Splits the RGB pixels of the image into channels 
-channels = cv2.split(RGB_img)
-
-# Creates an empty array for the equalized RGB pixels
-eq_channels = []
-
-# Runs through RGB channels to add color to the calculated histograms
-for ch, color in zip(channels, ['R', 'G','B']):
-    eq_channels.append(cv2.equalizeHist(ch))
-
-# Creates a new image after merging the equalized RGB channels together
-eq_img = cv2.merge(eq_channels)
-eq_img = cv2.cvtColor(eq_img, cv2.COLOR_BGR2RGB)
-
-# Runs through RGB channels to add color to the calculated histograms
-for i, col in enumerate(color1):
-    # Calculates the histogram of the RGB image
-    hist = cv2.calcHist([img],[i],None,[256],[0,256])
-    
-    # Calculates the equalized histogram
-    hist2 = cv2.calcHist([eq_img],[i], None, [256], [0,256])
-    
-    # Plots the colorful image, equalized image, colorful histogram, and equalized histogram
-    plt.subplot(221), plt.imshow(RGB_img)
-    plt.subplot(222), plt.imshow(eq_img)
-    plt.subplot(223), plt.plot(hist, color= col),plt.xlim([0,256])
-    plt.subplot(224), plt.plot(hist2, color= col),plt.xlim([0,256])
+plt.subplot(223),plt.imshow(eq_img, cmap = 'gray'),plt.title("Gray Scale Equalized Image")
+plt.subplot(224),plt.plot(cdf_normalized, color = 'b'),plt.hist(eq_img.flatten(),256,[0,256], color = 'r'),plt.xlim([0,256]),plt.title("Grayscale Equalized Histogram")
 
 plt.show()
 
