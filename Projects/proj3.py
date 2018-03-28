@@ -306,18 +306,16 @@ def filter_peaks(image):
     H8 = butterworth(25,1,228,147,shape)
     H9 = butterworth(25,1,291,147,shape)
     H10 = butterworth(25,1,35,245,shape)
-    H11 = butterworth(25,1,163,245,shape)
-    H12 = butterworth(25,1,293,245,shape)
-    H13 = butterworth(25,1,34,342,shape)
-    H14 = butterworth(25,1,97,342,shape)
-    H15 = butterworth(25,1,229,342,shape)
-    H16 = butterworth(25,1,292,342,shape)
-    H17 = butterworth(25,1,35,440,shape)
-    H18 = butterworth(25,1,98,440,shape)
-    H19 = butterworth(25,1,162,440,shape)
-    H20 = butterworth(25,1,228,440,shape)
-    H21 = butterworth(25,1,290,440,shape)
-    
+    H11 = butterworth(25,1,293,245,shape)
+    H12 = butterworth(25,1,34,342,shape)
+    H13 = butterworth(25,1,97,342,shape)
+    H14 = butterworth(25,1,229,342,shape)
+    H15 = butterworth(25,1,292,342,shape)
+    H16 = butterworth(25,1,35,440,shape)
+    H17 = butterworth(25,1,98,440,shape)
+    H18 = butterworth(25,1,162,440,shape)
+    H19 = butterworth(25,1,228,440,shape)
+    H20 = butterworth(25,1,290,440,shape)
 
     # Applying Butterworth filter to the Image
     filt_image = H1*fshift
@@ -340,15 +338,14 @@ def filter_peaks(image):
     filt_image *= H18
     filt_image *= H19
     filt_image *= H20
-    filt_image *= H21
-
+    
     # Shifting Image back to Spatial Domain"""
     ifftshift = np.fft.ifftshift(filt_image)
     ifft2 = np.fft.ifft2(ifftshift)
     ifft2 = ifft2.real
 
     # Plotting Results
-    plt.subplot(411),plt.imshow(img6,cmap = 'gray'),plt.title("Image 6"),plt.xticks([]),plt.yticks([])
+    plt.subplot(411),plt.imshow(image,cmap = 'gray'),plt.title("Image 6"),plt.xticks([]),plt.yticks([])
     plt.subplot(412),plt.imshow(np.log(1+np.abs(filt_image)), cmap='gray'),plt.title("Filtered Magnitude"),plt.xticks([]),plt.yticks([])
     plt.subplot(413),plt.imshow(ifft2,cmap = 'gray'),plt.title("Filtered Image"),plt.xticks([]),plt.yticks([])
     plt.subplot(414),plt.imshow(img7,cmap = 'gray'),plt.title("Image 7"),plt.xticks([]),plt.yticks([])
