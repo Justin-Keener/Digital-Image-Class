@@ -1,6 +1,13 @@
 import cv2
 import numpy as np
 import matplotlib.pyplot as plt
+"""
+Name: Justin Keener
+Assignment 3: Filters and Frequency Domain
+Date: 03/28/2018
+Digital Image Processing
+"""
+
 
 # Creates the image path to be read into a variable
 img_path = "/Users/justinkeener/Desktop/Digital-Image-Class/images/im1.jpg"
@@ -10,123 +17,340 @@ img2_path = "/Users/justinkeener/Desktop/Digital-Image-Class/images/im2.jpg"
 img2 = cv2.imread(img2_path,0)
 
 img3_path = "/Users/justinkeener/Desktop/Digital-Image-Class/images/im3.jpg"
-img3 = cv2.imread(img3_path)
+img3 = cv2.imread(img3_path,0)
 
-# Part 1
+img4_path = "/Users/justinkeener/Desktop/Digital-Image-Class/images/im4.jpg"
+img4 = cv2.imread(img4_path,0)
 
-# Convert to Frequency Domain
-f = np.fft.fft2(img)
-f_shift = np.fft.fftshift(f)
+img5_path = "/Users/justinkeener/Desktop/Digital-Image-Class/images/im5.jpg"
+img5 = cv2.imread(img5_path,0)
 
-# Convert back to Spatial
-f_ishift = np.fft.ifftshift(f_shift)
-img_back = np.fft.ifft2(f_ishift)
-img_back = np.abs(img_back)
+img6_path = "/Users/justinkeener/Desktop/Digital-Image-Class/images/im6.jpg"
+img6 = cv2.imread(img6_path,0)
 
-# Plots the Original Image and the Image Converted Back
-plt.figure()
-plt.subplot(141),plt.imshow(img, cmap = 'gray'),plt.title('Original Image'),plt.xticks([]), plt.yticks([])
-plt.subplot(144),plt.imshow(img_back, cmap  = 'gray'),plt.title('Converted Back to Spatial Image'),plt.xticks([]), plt.yticks([])
-plt.show()
+img7_path = "/Users/justinkeener/Desktop/Digital-Image-Class/images/im7.jpg"
+img7 = cv2.imread(img7_path,0)
 
-# Horizontal and Vertical Edges
-VE = cv2.Sobel(img, cv2.CV_64F, 1, 0, ksize = 5)
-HE = cv2.Sobel(img, cv2.CV_64F, 0, 1, ksize = 5)
+# Part 1:Converting Image to Frequency then to Spatial Domain and Merging Horizontal Edges and Vortical Edges 
+"""
+Function: convert_img
+Parameter: image
 
-# Vertical Edges Converted to Frequency Domain
-ve = np.fft.fft2(VE)
-ve_shift = np.fft.fftshift(ve)
-magn_ve_shift = np.log(np.abs(ve_shift)) + 1 
-ve_shift_phase = np.angle(ve_shift)
+1. Shifts an image to the Frequency Domain
+2. Converts the image back to the Spatial Domain
+3. Displays both images
+"""
 
-# Horizontal Edges Converted to Frequency Domain
-he = np.fft.fft2(HE)
-he_shift = np.fft.fftshift(he)
-magn_he_shift = np.log(np.abs(he_shift)) + 1
-he_shift_phase = np.angle(he_shift)
+def convert_img(image):
+    # Convert to Frequency Domain
+    f = np.fft.fft2(image)
+    fshift = np.fft.fftshift(f)
 
-# Vertical Edges converted ack to Spatial Domain
-ve_shift = np.fft.ifftshift(ve_shift)
-ve_ifft = np.fft.ifft2(ve_shift)
-ve_ifft = ve_ifft.real
+    # Convert back to Spatial
+    f_ishift = np.fft.ifftshift(fshift)
+    img_back = np.fft.ifft2(f_ishift)
+    img_back = np.abs(img_back)
 
-# Horizontal Edges converted back to Spatial Domain
-he_ishift = np.fft.ifftshift(he_shift)
-he_ifft = np.fft.ifft2(he_ishift)
-he_ifft = he_ifft.real
+    # Plots the Original Image and the Image Converted Back
+    plt.figure(figsize=(10,10))
+    plt.subplot(141),plt.imshow(image, cmap = 'gray'),plt.title('Original Image'),plt.xticks([]), plt.yticks([])
+    plt.subplot(144),plt.imshow(img_back, cmap  = 'gray'),plt.title('Converted Back to Spatial Image'),plt.xticks([]), plt.yticks([])
+    plt.show()
+convert_img(img)
 
-# Horizontal and Vertical Edges merged together to form Image 2
-merged_img = cv2.add(ve_ifft,he_ifft)
+"""
+function: merge_images
+Parameter: image
+1. Takes in an image
+2. Determines the horizontal and vertical edges of the image
+3. Converts the edges to the frequency domain
+4. Converts the edges back to Spatial Domain
+5. Merges the two edges together to form another image that resembles image 2
+"""
 
-# Plotting the Horizontal & Vertical Edges in Spatial Domain & Magnitude and Phase Spectrum in the Frequency Domain, and the Merged Image
-plt.figure(figsize=(20,20))
-plt.subplot(521),plt.imshow(VE, cmap = 'gray'),plt.title('Vertical Edges'),plt.xticks([]), plt.yticks([])
-plt.subplot(522),plt.imshow(HE, cmap = 'gray'),plt.title('Horizontal Edges'),plt.xticks([]), plt.yticks([])
-plt.subplot(523),plt.imshow(magn_ve_shift, cmap = 'gray'),plt.title('Vertical Magnitude Spectrum'),plt.xticks([]), plt.yticks([])
-plt.subplot(524),plt.imshow(ve_shift_phase, cmap = 'gray'),plt.title('Vertical Phase'),plt.xticks([]), plt.yticks([])
-plt.subplot(525),plt.imshow(magn_he_shift, cmap = 'gray'),plt.title('Horizontal Magnitude Spectrum'),plt.xticks([]), plt.yticks([])
-plt.subplot(526),plt.imshow(he_shift_phase, cmap = 'gray'),plt.title('Horizontal Phase'),plt.xticks([]), plt.yticks([])
-plt.subplot(527),plt.imshow(ve_ifft, cmap = 'gray'),plt.title('Converted Back Vertical Edges'),plt.xticks([]), plt.yticks([])
-plt.subplot(528),plt.imshow(he_ifft, cmap = 'gray'),plt.title('Converted Back Horizontal Edges'),plt.xticks([]), plt.yticks([])
-plt.subplot(529),plt.imshow(merged_img, cmap = 'gray'),plt.title('Merged Image'),plt.xticks([]), plt.yticks([])
-plt.subplot(5,2,10),plt.imshow(img2, cmap = 'gray'),plt.title('Image 2'),plt.xticks([]), plt.yticks([])
-plt.show()
+def merge_edges(image):
+    # Horizontal and Vertical Edges
+    VE = cv2.Sobel(image, cv2.CV_64F, 1, 0, ksize = 5)
+    HE = cv2.Sobel(image, cv2.CV_64F, 0, 1, ksize = 5)
 
-# Part 2
+    # Vertical Edges Converted to Frequency Domain
+    ve = np.fft.fft2(VE)
+    ve_shift = np.fft.fftshift(ve)
+   
+    # Horizontal Edges Converted to Frequency Domain
+    he = np.fft.fft2(HE)
+    he_shift = np.fft.fftshift(he)
 
-# Collects data for rows and columns of the image
-rows, cols = img3.shape
+    # Vertical Edges converted back to Spatial Domain
+    ve_shift = np.fft.ifftshift(ve_shift)
+    ve_ifft = np.fft.ifft2(ve_shift)
+    ve_ifft = ve_ifft.real
 
-# Shifts the image to Frequency Domain
-fft = np.fft.fft2(img)
-f_shift3 = np.fft.fftshift(fft)
+    # Horizontal Edges converted back to Spatial Domain
+    he_ishift = np.fft.ifftshift(he_shift)
+    he_ifft = np.fft.ifft2(he_ishift)
+    he_ifft = he_ifft.real
 
-# Collects data to center the rows and columns 
-crow,ccol = rows//2 , cols//2
+    # Horizontal and Vertical Edges merged together to form Image 2
+    merged_img = cv2.add(ve_ifft,he_ifft)
 
-# Creates a mask with size of 50x50 with center square is 1 and the remaining are all zeros
-mask = np.zeros((rows,cols), np.uint8)
-mask[crow-25:crow+25, ccol-25:ccol+25] = 1
+    # Plotting the Horizontal & Vertical Edges in Spatial Domain & Magnitude and Phase Spectrum in the Frequency Domain, and the Merged Image
+    plt.figure(figsize=(20,20))
+    plt.subplot(321),plt.imshow(VE, cmap = 'gray'),plt.title('Vertical Edges'),plt.xticks([]), plt.yticks([])
+    plt.subplot(322),plt.imshow(HE, cmap = 'gray'),plt.title('Horizontal Edges'),plt.xticks([]), plt.yticks([])
+    plt.subplot(323),plt.imshow(ve_ifft, cmap = 'gray'),plt.title('Converted Back Vertical Edges'),plt.xticks([]), plt.yticks([])
+    plt.subplot(324),plt.imshow(he_ifft, cmap = 'gray'),plt.title('Converted Back Horizontal Edges'),plt.xticks([]), plt.yticks([])
+    plt.subplot(325),plt.imshow(merged_img, cmap = 'gray'),plt.title('Merged Image'),plt.xticks([]), plt.yticks([])
+    plt.subplot(326),plt.imshow(img2, cmap = 'gray'),plt.title('Image 2'),plt.xticks([]), plt.yticks([])
+    plt.show()
+merge_edges(img2)
 
-# LPF: Low Pass Filter
-# Applies a convolution of the Frequency Domain image and the mask to create a Low Pass Filter Image
-LPF = f_shift3*mask
-f_ishift3 = np.fft.ifftshift(LPF)
+# Part 2: Low Pass and High Pass Filter applied to Image 3
 
-# Converts low pass filtered image back into Spatial Domain
-img_back3 = np.fft.ifft2(f_ishift3)
-img_back3 = np.abs(img_back3)
+f = np.fft.fft2(img3)
+fshift = np.fft.fftshift(f)
+rows,cols = img3.shape
 
-# Plot the Original Image and Low Pass Filter Image
-plt.subplot(121),plt.imshow(img, cmap = 'gray'),plt.title('Input Image'), plt.xticks([]), plt.yticks([])
-plt.subplot(122),plt.imshow(img_back, cmap = 'gray'),plt.title('Image after LPF'), plt.xticks([]), plt.yticks([])
+"""
+Function: Low Pass Filter
 
-# HPF: High Pass Filter
-# Applies a window to remove all of the low frequencies to the shifted image
-f_shift3[crow-15:crow+15, ccol-15:ccol+15] = 0
+Parameters:
+Sigma = Standard Deviation
+Rows = Number of rows of the image
+Cols = Number of columns of the image
 
-# Shifts image back to Spatial Domain passing through a High Pass Filter
-f_ishift3 = np.fft.ifftshift(f_shift3)
-hpf_img_back = np.fft.ifft2(f_ishift3)
-hpf_img_back = hpf_img_back.real
+dist = distance between pixels
+H[i,j] = indexing each pixel to equal low pass filter equation
+H = np.array(H) converts H into an array 
 
-# Plots Image 3 and the image after being filtered
-plt.figure()
-plt.subplot(121),plt.imshow(img3, cmap = 'gray'),plt.title('Input Image'), plt.xticks([]), plt.yticks([])
-plt.subplot(122),plt.imshow(hpf_img_back, cmap = 'gray'),plt.title('Image after HPF'), plt.xticks([]), plt.yticks([])
-plt.show()
+1. Creates a tuple H with dimension of the image
+2. Traverses between each pixel of the image
+3. Determines the distance between each pixel
+4. Calculates each pixel to equate to the low pass filter
+5. Converts H into an array
+6. Applies the newly created low pass filter H to the image
+7. Filtered image is converted back to the Spatial Domain to compare results
+"""
 
-# Part 3
+def gauss_lowpass(sigma, rows,cols):
+    H = np.zeros((rows,cols))
+    # Traverses through each pixel of the image
+    for i in range(rows):
+        for j in range(cols):
+            dist = ((rows/2 - i)**2 + (cols/2 - j)**2)
+            H[i,j] = (1/(2*np.pi*(sigma**2)))*np.exp(-(dist)/(2*sigma**2))
+            H = np.array(H)
+    
+    # Applies Low Pass Filter to Frequency Domain Image
+    filt_img = H*fshift
 
-# Magnitude and Phase Spectrum of Image 1
-magn_spectrum = np.log(np.abs(f_shift))
-f_phase = np.angle(f_shift)
+    # Shifts image back after low pass filter has been applied
+    img3_back = np.fft.ifftshift(filt_img)
+    img3_back = np.fft.ifft2(img3_back)
+    img3_back = img3_back.real
+    
+    # Plots images
+    plt.figure(figsize=(10,10))
+    plt.subplot(311), plt.imshow((img3), cmap='gray'),plt.title("Image 2"),plt.xticks([]),plt.yticks([])
+    plt.subplot(312), plt.imshow((img3_back), cmap='gray'),plt.title("Low Pass Filter Applied to Image 2"),plt.xticks([]),plt.yticks([])
+    plt.subplot(313), plt.imshow((img5), cmap='gray'),plt.title("Image 5"),plt.xticks([]),plt.yticks([])
+    plt.show()
+gauss_lowpass(10,rows,cols)
 
-# Magnitude and Phase Spectrum of Image 2
-magn_spectrum3 = np.log(np.abs(f_shift3))
-f_phase3 = np.angle(f_shift3)
+"""
+Function: High Pass Filter
 
-plt.subplot(221),plt.imshow(magn_spectrum, cmap = 'gray'),plt.title('Magnitude Spectrum'),plt.xticks([]), plt.yticks([])
-plt.subplot(222),plt.imshow(f_phase, cmap = 'gray'),plt.title('Phase Spectrum'),plt.xticks([]), plt.yticks([])
-plt.subplot(221),plt.imshow(magn_spectrum3, cmap = 'gray'),plt.title('Magnitude Spectrum'),plt.xticks([]), plt.yticks([])
-plt.subplot(222),plt.imshow(f_phase3, cmap = 'gray'),plt.title('Phase Spectrum'),plt.xticks([]), plt.yticks([])
+Parameters:
+D0 = Cutoff Frequency
+Rows = Number of rows of the image
+Cols = Number of columns of the image
+
+dist = distance between pixels
+H[i,j] = indexing each pixel to equal high pass filter equation
+H = np.array(H) converts H into an array 
+
+1. Creates a tuple H with dimension of the image
+2. Traverses between each pixel of the image
+3. Determines the distance between each pixel
+4. Calculates each pixel to equate to the low pass filter
+5. Converts H into an array
+6. Applies the newly created high pass filter H to the image
+7. Filtered image is converted back to the Spatial Domain to compare results
+"""
+
+def highpass(D0,rows,cols):
+    H = np.zeros((rows,cols))
+    for i in range(rows):
+        for j in range(cols):
+            dist = np.sqrt((i**2) + (j**2))
+            H[i,j] = np.exp(-(dist**2)/(2*(D0**2)))
+            H = np.array(H)
+    
+    # Applies high pass filter to image
+    filt_img = H*fshift
+
+    # Converts Image back to Spatial Domain
+    img3_back = np.fft.ifftshift(filt_img)
+    img3_back = np.fft.ifft2(img3_back)
+    img3_back = img3_back.real
+
+    # Plots images
+    plt.figure(figsize=(10,10))
+    plt.subplot(311), plt.imshow((img3), cmap='gray'),plt.title("Image 2"),plt.xticks([]),plt.yticks([])
+    plt.subplot(312), plt.imshow((img3_back), cmap='gray'),plt.title("High Pass Filter applied to Image 2"),plt.xticks([]),plt.yticks([])
+    plt.subplot(313), plt.imshow((img4), cmap='gray'),plt.title("Image 5"),plt.xticks([]),plt.yticks([])
+    plt.show()
+highpass(80,rows,cols)
+
+# Part 3: Swapping Phases for Image 1 and Image 3
+
+"""
+Function: swapPhase()
+Parameters: image1, and image2
+
+1. img1 and img3 are passed through the parameters
+2. These images are converted to the Frequency Domain
+3. Magnitudes and Phases are determined for each image
+4. New output images are generated by swapping phases for the two different magnitudes
+5. New output images are converted back to Spatial Domain
+6. Results are plotted
+"""
+def swapPhase(image1,image2):
+    
+    # Resizes image 2
+    image2 = cv2.resize(image2,(317,231))
+
+    # Shift image 1 to Frequency Domain
+    f = np.fft.fft2(image1)
+    fshift = np.fft.fftshift(f)
+
+    # Determine the magnitude and phase of Image 1 Frequency Domain
+    magn_spectrum = np.log(1 + np.abs(fshift))
+    phase = np.angle(fshift)
+
+    # Shift image 1 to Frequency Domain
+    f2 = np.fft.fft2(image2)
+    fshift2 = np.fft.fftshift(f2)
+    
+    # Determine the magnitude and phase of Image 2 Frequency Domain
+    magn_spectrum2 = np.log(1 + np.abs(fshift2))
+    phase2 = np.angle(fshift2)
+
+    # Swap the phases
+    output_fimg1 = magn_spectrum*(np.exp(1j*phase2))
+    output_fimg2 = magn_spectrum2*(np.exp(1j*phase))
+
+    # Convert swapped phase images back to Spatial Domain
+    ifftshift = np.fft.ifftshift(output_fimg1)
+    ifft = np.fft.ifft2(ifftshift)
+    ifft = ifft.real
+
+    ifftshift2 = np.fft.ifft(output_fimg2)
+    ifft2 = np.fft.ifft2(ifftshift2)
+    ifft2 = ifft2.real
+
+    # Plot images and phase spectrums
+    plt.figure()
+    plt.subplot(421),plt.imshow(image1,cmap= 'gray'),plt.title("Image 1"),plt.xticks([]),plt.yticks([])
+    plt.subplot(422),plt.imshow(image2,cmap= 'gray'),plt.title("Image 3"),plt.xticks([]),plt.yticks([])
+    plt.subplot(423),plt.imshow(magn_spectrum,cmap= 'gray'),plt.title("Image 1 Magnitude Spectrum"),plt.xticks([]),plt.yticks([])
+    plt.subplot(424),plt.imshow(phase,cmap= 'gray'),plt.title("Image 1 Phase Spectrum"),plt.xticks([]),plt.yticks([])
+    plt.subplot(425),plt.imshow(magn_spectrum2,cmap= 'gray'),plt.title("Image 3 Magnitude Spectrum"),plt.xticks([]),plt.yticks([])
+    plt.subplot(426),plt.imshow(phase2,cmap= 'gray'),plt.title("Image 3 Phase Spectrum"),plt.xticks([]),plt.yticks([])
+    plt.subplot(427),plt.imshow(ifft,cmap= 'gray'),plt.title("Magnitude Image 1 with Image 3 Phase"),plt.xticks([]),plt.yticks([])
+    plt.subplot(428),plt.imshow(ifft2,cmap= 'gray'),plt.title("Magnitude Image 3 with Image 1 Phase"),plt.xticks([]),plt.yticks([])
+    plt.show()
+swapPhase(img,img3)
+
+# Part 4: Filtering Peaks
+"""
+Function: filter_peaks(), butterworth()
+Parameters: Image
+Parmeters: D0, n, x, y, shape
+D0 = Cutoff Frequency, n = 1, x & y = pixel location, shape = image shape
+
+1. Convert the image to Frequency Domain
+2. Create Butterworth function
+3. Calculate each Butterworth filter for each peak
+4. Calculate the total butterworth filter
+5. Apply total butterworth filter to Frequency Domain Image
+6. Convert the Filtered image back to Spatial Domain
+7. Compare results
+"""
+def filter_peaks(image):
+    f = np.fft.fft2(image)
+    fshift = np.fft.fftshift(f)
+    rows,cols = img.shape
+
+    # Butterworth function
+    def butterworth(D0, n, x, y, shape):
+        H = np.zeros(shape)
+        for i in range(shape[0]):
+            for j in range(shape[1]):
+                if i== x and j==y:
+                    H[i,j] = 0
+                else:
+                    dist = ((x - i)**2 + (y - j)**2)
+                    H[i,j] = 1 - (1/(1 + pow(dist/(D0**2), 2/n))) 
+                H = np.array(H)
+        return H
+
+    # Calculating individual buttworth filters to flatten the peaks
+    H1 = butterworth(40,1,34,49,shape)
+    H2 = butterworth(40,1,98,49,shape)
+    H3 = butterworth(40,1,164,49,shape)
+    H4 = butterworth(40,1,228,49,shape)
+    H5 = butterworth(40,1,295,49,shape)
+    H6 = butterworth(40,1,34,147,shape)
+    H7 = butterworth(40,1,97,147,shape)
+    H8 = butterworth(40,1,291,147,shape)
+    H9 = butterworth(40,1,35,245,shape)
+    H10 = butterworth(40,1,163,245,shape)
+    H11 = butterworth(40,1,293,245,shape)
+    H12 = butterworth(40,1,34,342,shape)
+    H13 = butterworth(40,1,97,342,shape)
+    H14 = butterworth(40,1,229,342,shape)
+    H15 = butterworth(40,1,292,342,shape)
+    H16 = butterworth(40,1,35,440,shape)
+    H17 = butterworth(40,1,98,440,shape)
+    H18 = butterworth(40,1,162,440,shape)
+    H19 = butterworth(40,1,228,440,shape)
+    H20 = butterworth(40,1,290,440,shape)
+
+    # Calculating the the total Butterworth Filter
+    Htotal = H1*H2
+    Htotal *=H3
+    Htotal *=H4
+    Htotal *=H5
+    Htotal *=H6
+    Htotal *=H7
+    Htotal *=H8
+    Htotal *=H9
+    Htotal *=H10
+    Htotal *=H11
+    Htotal *=H12
+    Htotal *=H13
+    Htotal *=H14
+    Htotal *=H15
+    Htotal *=H16
+    Htotal *=H17
+    Htotal *=H18
+    Htotal *=H19
+    Htotal *=H20
+
+    # Applying Butterworth filter to the Image
+    filt_imag = Htotal*fshift
+
+    # Shifting Image back to Spatial Domain
+    ifftshift = np.ifftshift(filt_imag)
+    ifft2 = np.fft.ifft2(ifftshift)
+    ifft2 = ifft2.real
+
+    # Plotting Results
+    plt.subplot(511), plt.imshow(img6,cmap = 'gray'),plt.title("Image 6"),plt.xticks([]),plt.yticks([])
+    plt.subplot(512), plt.imshow(np.log(1+np.abs(filt_img)), cmap='gray'),,plt.title("Filtered Magnitude")plt.xticks([]),plt.yticks([])
+    plt.subplot(513), plt.imshow(ifft2,cmap = 'gray'),plt.title("Filtered Image"),plt.xticks([]),plt.yticks([])
+    plt.subplot(514), plt.imshow(img6,cmap = 'gray'),plt.title("Image 6"),plt.xticks([]),plt.yticks([])
+    plt.subplot(511), plt.imshow(img7,cmap = 'gray'),plt.title("Image 7"),plt.xticks([]),plt.yticks([])
+    plt.show()
+filter_peaks(img6)
