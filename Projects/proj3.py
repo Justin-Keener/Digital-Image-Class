@@ -280,7 +280,7 @@ D0 = Cutoff Frequency, n = 1, x & y = pixel location, shape = image shape
 def filter_peaks(image):
     f = np.fft.fft2(image)
     fshift = np.fft.fftshift(f)
-    rows,cols = img.shape
+    shape = image.shape
 
     # Butterworth function
     def butterworth(D0, n, x, y, shape):
@@ -296,61 +296,61 @@ def filter_peaks(image):
         return H
 
     # Calculating individual buttworth filters to flatten the peaks
-    H1 = butterworth(40,1,34,49,shape)
-    H2 = butterworth(40,1,98,49,shape)
-    H3 = butterworth(40,1,164,49,shape)
-    H4 = butterworth(40,1,228,49,shape)
-    H5 = butterworth(40,1,295,49,shape)
-    H6 = butterworth(40,1,34,147,shape)
-    H7 = butterworth(40,1,97,147,shape)
-    H8 = butterworth(40,1,291,147,shape)
-    H9 = butterworth(40,1,35,245,shape)
-    H10 = butterworth(40,1,163,245,shape)
-    H11 = butterworth(40,1,293,245,shape)
-    H12 = butterworth(40,1,34,342,shape)
-    H13 = butterworth(40,1,97,342,shape)
-    H14 = butterworth(40,1,229,342,shape)
-    H15 = butterworth(40,1,292,342,shape)
-    H16 = butterworth(40,1,35,440,shape)
-    H17 = butterworth(40,1,98,440,shape)
-    H18 = butterworth(40,1,162,440,shape)
-    H19 = butterworth(40,1,228,440,shape)
-    H20 = butterworth(40,1,290,440,shape)
-
-    # Calculating the the total Butterworth Filter
-    Htotal = H1*H2
-    Htotal *=H3
-    Htotal *=H4
-    Htotal *=H5
-    Htotal *=H6
-    Htotal *=H7
-    Htotal *=H8
-    Htotal *=H9
-    Htotal *=H10
-    Htotal *=H11
-    Htotal *=H12
-    Htotal *=H13
-    Htotal *=H14
-    Htotal *=H15
-    Htotal *=H16
-    Htotal *=H17
-    Htotal *=H18
-    Htotal *=H19
-    Htotal *=H20
+    H1 = butterworth(25,1,34,49,shape)
+    H2 = butterworth(25,1,98,49,shape)
+    H3 = butterworth(25,1,164,49,shape)
+    H4 = butterworth(25,1,228,49,shape)
+    H5 = butterworth(25,1,295,49,shape)
+    H6 = butterworth(25,1,34,147,shape)
+    H7 = butterworth(25,1,97,147,shape)
+    H8 = butterworth(25,1,228,147,shape)
+    H9 = butterworth(25,1,291,147,shape)
+    H10 = butterworth(25,1,35,245,shape)
+    H11 = butterworth(25,1,163,245,shape)
+    H12 = butterworth(25,1,293,245,shape)
+    H13 = butterworth(25,1,34,342,shape)
+    H14 = butterworth(25,1,97,342,shape)
+    H15 = butterworth(25,1,229,342,shape)
+    H16 = butterworth(25,1,292,342,shape)
+    H17 = butterworth(25,1,35,440,shape)
+    H18 = butterworth(25,1,98,440,shape)
+    H19 = butterworth(25,1,162,440,shape)
+    H20 = butterworth(25,1,228,440,shape)
+    H21 = butterworth(25,1,290,440,shape)
+    
 
     # Applying Butterworth filter to the Image
-    filt_imag = Htotal*fshift
+    filt_image = H1*fshift
+    filt_image *= H2
+    filt_image *= H3
+    filt_image *= H4
+    filt_image *= H5
+    filt_image *= H6
+    filt_image *= H7
+    filt_image *= H8
+    filt_image *= H9
+    filt_image *= H10
+    filt_image *= H11
+    filt_image *= H12
+    filt_image *= H13
+    filt_image *= H14
+    filt_image *= H15
+    filt_image *= H16
+    filt_image *= H17
+    filt_image *= H18
+    filt_image *= H19
+    filt_image *= H20
+    filt_image *= H21
 
-    # Shifting Image back to Spatial Domain
-    ifftshift = np.ifftshift(filt_imag)
+    # Shifting Image back to Spatial Domain"""
+    ifftshift = np.fft.ifftshift(filt_image)
     ifft2 = np.fft.ifft2(ifftshift)
     ifft2 = ifft2.real
 
     # Plotting Results
-    plt.subplot(511), plt.imshow(img6,cmap = 'gray'),plt.title("Image 6"),plt.xticks([]),plt.yticks([])
-    plt.subplot(512), plt.imshow(np.log(1+np.abs(filt_img)), cmap='gray'),,plt.title("Filtered Magnitude")plt.xticks([]),plt.yticks([])
-    plt.subplot(513), plt.imshow(ifft2,cmap = 'gray'),plt.title("Filtered Image"),plt.xticks([]),plt.yticks([])
-    plt.subplot(514), plt.imshow(img6,cmap = 'gray'),plt.title("Image 6"),plt.xticks([]),plt.yticks([])
-    plt.subplot(511), plt.imshow(img7,cmap = 'gray'),plt.title("Image 7"),plt.xticks([]),plt.yticks([])
+    plt.subplot(411),plt.imshow(img6,cmap = 'gray'),plt.title("Image 6"),plt.xticks([]),plt.yticks([])
+    plt.subplot(412),plt.imshow(np.log(1+np.abs(filt_image)), cmap='gray'),plt.title("Filtered Magnitude"),plt.xticks([]),plt.yticks([])
+    plt.subplot(413),plt.imshow(ifft2,cmap = 'gray'),plt.title("Filtered Image"),plt.xticks([]),plt.yticks([])
+    plt.subplot(414),plt.imshow(img7,cmap = 'gray'),plt.title("Image 7"),plt.xticks([]),plt.yticks([])
     plt.show()
 filter_peaks(img6)

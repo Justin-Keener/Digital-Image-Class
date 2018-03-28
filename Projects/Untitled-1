@@ -1,0 +1,17 @@
+H1 = butterworth(40, 1, ,shape)
+filt_img = H1*fshift
+
+plt.plot(), plt.imshow(np.log(1+np.abs(filt_img)), cmap='gray'),plt.show()
+
+
+d0 = 40
+filt_img = img
+loc = np.array([(49,34),(98,49),(164,49),(228,49),(295,49),(34,147),(147,),(147,)])
+for i in range loc.shape[0]:
+    filt_imag = butterworth(d0, 1, loc[i],shape)*filt_imag
+
+H1 = butterworth(d0,1,34,49,shape)
+H2 = butterworth(d0,1,98,49,shape)
+H3 = butterworth(d0,1,164,49,shape)
+H4 = butterworth(d0,1,228,49,shape)
+H5 = butterworth(d0,1,34,49,shape)
